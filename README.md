@@ -21,7 +21,7 @@ The folder, Hydrodynamic Shock-Tube Problems, contains the code for each test pr
 The work presented in this paper is the first and only PINNs solver that
 can solve a general class of hydrodynamic shock-tube problems with extraordinary accuracy. 
 
-<img src=./Sod-Shock-Tube-Figures/sod.png width="350" height="300"/><img src=./Sod-Shock-Tube-Figures/sod_other.png width="350" height="300"/>
+<img src=./Sod-Shock-Tube-Figures/Sod.gif width="350" height="300"/><img src=./Sod-Shock-Tube-Figures/sod_other.png width="350" height="300"/>
                              
 *W-PINNs-DE solutions (red) compared to exact solutions (black) of the Sod Shock-Tube Problem*
 
