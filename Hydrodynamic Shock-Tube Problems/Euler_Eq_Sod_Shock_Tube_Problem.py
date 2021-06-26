@@ -3,17 +3,18 @@ Forward Problem for 1-D Euler Equations for Compressible Flow: The Sod Problem
 Weighted Physics-Informed Neural Networks with Domain Extension
 Author: Alexandros D.L Papados
 In this code we solve for rho, u, p  from the following equations:
-                               U_t + AU_x = 0,         (x,t) in (0,1)x(0,0.2]
+                               U_t + AU_x = G,         (x,t) in (0,1)x(0,0.2]
                               (rho,u,p)_t=0 = (1.0,0.0,1.0) 0 <= x < 0.5
                               (rho,u,p)_t=0 = (0.125,0.0,0.1) 0.5 <= x <=1
 with Dirichlet boundary conditions which take the values of the initial condition at the boundaries
-                               U = [ rho ]       and       A =  [    u, rho, 0    ]
-                                   [  u  ]                      [   0,  u, 1/rho  ]
-                                   [  p  ]                      [   0, gamma*p, u ]
+                               U = [ rho ]       ,         A =  [    u, rho, 0    ]         ,           G = [     0       ]                                                                                                        
+                                   [  u  ]                      [   0,  u, 1/rho  ]                         [ nu*rho*u_xx ]
+                                   [  p  ]                      [   0, gamma*p, u ]                         [     0       ]
 rho -- Density of the fluid
 u   -- Velocity of the fluid - x direction
 p   -- Pressure of the fluid
-E   --  Total energy of fluid
+E   -- Total energy of fluid
+nu  -- Viscous term, nu = 0.001
 We relate the pressure and energy by the equation of state of the form
                                              p = (gamma - 1) ( rho*E - 0.5*rho||u||^2)
 For this problem we use gamma = 1.4
@@ -58,25 +59,25 @@ class DNN(nn.Module):
 
     # Loss function for PDE
     def loss_pde(self, x):
-        y = self.net(x)                                                # Neural network
-        rho,p,u = y[:, 0:1], y[:, 1:2], y[:, 2:]                       # NN_{rho}, NN_{u}, NN_{p}
-        gamma = 1.4                                                    # Heat Capacity Ratio
+    y = self.net(x)                                                # Neural network
+        rho,p,u = y[:, 0:1], y[:, 1:2], y[:, 2:]                   # NN_{rho}, NN_{u}, NN_{p}
+        gamma = 1.4                                                # Heat Capacity Ratio
 
         # Gradients and partial derivatives
-        drho_g = gradients(rho, x)[0]                                  # Gradient [rho_t, rho_x]
-        rho_t, rho_x = drho_g[:, :1], drho_g[:, 1:]                    # Partial derivatives rho_t, rho_x
+        drho_g = gradients(rho, x)[0]                              # Gradient [rho_t, rho_x]
+        rho_t, rho_x = drho_g[:, :1], drho_g[:, 1:]                # Partial derivatives rho_t, rho_x
 
 
-        du_g = gradients(u, x)[0]                                      # Gradient [u_t, u_x]
-        u_t, u_x = du_g[:, :1], du_g[:, 1:]                            # Partial derivatives u_t, u_x
+        du_g = gradients(u, x)[0]                                  # Gradient [u_t, u_x]
+        u_t, u_x = du_g[:, :1], du_g[:, 1:]                        # Partial derivatives u_t, u_x
 
-
-        dp_g = gradients(p, x)[0]                                      # Gradient [p_t, p_x]
-        p_t, p_x = dp_g[:, :1], dp_g[:, 1:]                            # Partial derivatives p_t, p_x
+        u_xx = gradients(u_x, x)[0][:, 1:]                         # Second derivative, u_xx
+        dp_g = gradients(p, x)[0]                                  # Gradient [p_t, p_x]
+        p_t, p_x = dp_g[:, :1], dp_g[:, 1:]                        # Partial derivatives p_t, p_x
 
         # Loss function for the Euler Equations
         f = ((rho_t + u*rho_x + rho*u_x)**2).mean() + \
-            ((rho*(u_t + (u)*u_x) + (p_x))**2).mean() + \
+            ((rho*(u_t + (u)*u_x) + (p_x) - 0.0010*rho*u_xx)**2).mean() + \
             ((p_t + gamma*p*u_x + u*p_x)**2).mean()
 
         return f
