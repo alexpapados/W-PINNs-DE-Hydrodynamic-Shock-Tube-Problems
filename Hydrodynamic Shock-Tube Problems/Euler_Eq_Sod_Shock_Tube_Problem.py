@@ -7,8 +7,8 @@ In this code we solve for rho, u, p  from the following equations:
                               (rho,u,p)_t=0 = (1.0,0.0,1.0) 0 <= x < 0.5
                               (rho,u,p)_t=0 = (0.125,0.0,0.1) 0.5 <= x <=1
 with Dirichlet boundary conditions which take the values of the initial condition at the boundaries
-                               U = [ rho ]       ,         A =  [    u, rho, 0    ]         ,           G = [     0       ]                                                                                                        
-                                   [  u  ]                      [   0,  u, 1/rho  ]                         [ nu*rho*u_xx ]
+                               U = [ rho ]       ,         A =  [   u,  rho,    0 ]         ,           G = [     0       ]                                                                                                        
+                                   [  u  ]                      [   0, rho*u,  rho]                         [ nu*rho*u_xx ]
                                    [  p  ]                      [   0, gamma*p, u ]                         [     0       ]
 rho -- Density of the fluid
 u   -- Velocity of the fluid - x direction
