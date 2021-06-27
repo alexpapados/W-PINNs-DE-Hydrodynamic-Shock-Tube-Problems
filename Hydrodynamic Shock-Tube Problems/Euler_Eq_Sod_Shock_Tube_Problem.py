@@ -135,7 +135,7 @@ def main():
     num_x = 1000                                                          # Number of points in t
     num_t = 1000                                                          # Number of points in x
     num_i_train = 1000                                                    # Random sampled points from IC
-    epochs = 76140                                                        # Number of iterations
+    epochs = 92310                                                        # Number of iterations
     num_f_train = 11000                                                   # Random sampled points in interior
     x = np.linspace(-1.5, 3.125, num_x)                                   # Partitioned spatial axis
     t = np.linspace(0, 0.2, num_t)                                        # Partitioned time axis
