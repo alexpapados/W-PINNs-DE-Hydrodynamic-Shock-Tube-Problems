@@ -59,7 +59,7 @@ class DNN(nn.Module):
 
     # Loss function for PDE
     def loss_pde(self, x):
-    y = self.net(x)                                                # Neural network
+        y = self.net(x)                                            # Neural network
         rho,p,u = y[:, 0:1], y[:, 1:2], y[:, 2:]                   # NN_{rho}, NN_{u}, NN_{p}
         gamma = 1.4                                                # Heat Capacity Ratio
 
